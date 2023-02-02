@@ -1,0 +1,49 @@
+name: keytastic
+description: A new Flutter project.
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.18.6 <3.0.0'
+
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.2
+  flutter_native_splash: ^2.2.17
+  passwordfield: ^0.1.0
+  http: ^0.13.5
+  flutter_dotenv: ^5.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+
+  flutter_lints: ^2.0.0
+
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - images/
+    - ./.env
+
+  fonts:
+    - family: Comfortaa
+      fonts:
+        - asset: fonts\Comfortaa-VariableFont_wght.ttf
+
+
+flutter_native_splash:
+  # flutter pub run flutter_native_splash:create
+  color: "#990D35"
+  image: images/splash.png
+
+  color_dark: "#990D35"
+  image_dark: images/splash.png
