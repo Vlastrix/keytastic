@@ -15,26 +15,19 @@ class SignUp extends StatelessWidget {
     String? email;
     String? password;
     String? confirmPassword;
-    return MaterialApp(
-        theme: ThemeData(
-            scaffoldBackgroundColor: KeyTasticColors().keytasticDarkRed,
-            fontFamily: 'Comfortaa'),
-        debugShowCheckedModeBanner: false,
-        title: 'KeyTastic!',
-        home: Scaffold(
+    return Scaffold(
           body: SafeArea(
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // TODO: CREATE AND ADD THE NEW LOGO HERE
                   Text(
                     'Create an account!',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                        fontSize: 40,
-                        color: KeyTasticColors().keytasticYellow,
-                        fontFamily: 'Comfortaa'),
+                      fontSize: 40,
+                      color: KeyTasticColors().keytasticYellow,
+                    ),
                   ),
                   SizedBox(
                     height: 20.0,
@@ -169,7 +162,7 @@ class SignUp extends StatelessWidget {
               ),
             ),
           ),
-        ));
+        );
   }
 }
 

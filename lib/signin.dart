@@ -8,13 +8,7 @@ class SignIn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        theme: ThemeData(
-            scaffoldBackgroundColor: KeyTasticColors().keytasticDarkRed,
-            fontFamily: 'Comfortaa'),
-        debugShowCheckedModeBanner: false,
-        title: 'KeyTastic!',
-        home: Scaffold(
+    return Scaffold(
           body: SafeArea(
             child: Center(
               child: Column(
@@ -52,6 +46,7 @@ class SignIn extends StatelessWidget {
                     width: 346,
                     padding: const EdgeInsets.all(10),
                     child: TextFormField(
+                      obscureText: true,
                       decoration: InputDecoration(
                           hintText: 'Password',
                           filled: true,
@@ -113,6 +108,6 @@ class SignIn extends StatelessWidget {
               ),
             ),
           ),
-        ));
+        );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import './signup.dart';
 import './signin.dart';
+import './keytastic_colors.dart';
 
 void main() {
   runApp(const KeyTastic());
@@ -12,6 +13,13 @@ class KeyTastic extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SignUp();
+    return MaterialApp(
+      theme: ThemeData(
+          scaffoldBackgroundColor: KeyTasticColors().keytasticDarkRed,
+          fontFamily: 'Comfortaa'),
+      debugShowCheckedModeBanner: false,
+      title: 'KeyTastic!',
+      home: SignUp(),
+    );
   }
 }
