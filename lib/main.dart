@@ -19,7 +19,11 @@ class KeyTastic extends StatelessWidget {
           fontFamily: 'Comfortaa'),
       debugShowCheckedModeBanner: false,
       title: 'KeyTastic!',
-      home: SignUp(),
+      home: Scaffold(
+        body: SafeArea(
+          child: SignUp()
+        )
+      ),
     );
   }
 }
