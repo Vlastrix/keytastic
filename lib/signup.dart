@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:keytastic/signin.dart';
 import 'package:passwordfield/passwordfield.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
 
 import './keytastic_colors.dart';
+import './dashboard.dart';
 
 class SignUp extends StatelessWidget {
   const SignUp({super.key});
+  static const String id = 'signup';
 
   @override
   Widget build(BuildContext context) {
@@ -114,6 +117,7 @@ class SignUp extends StatelessWidget {
             child: ElevatedButton(
               onPressed: () {
                 signUpSendToServer(username, email, password);
+                Navigator.pushNamed(context, Dashboard.id);
               },
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(
@@ -141,7 +145,7 @@ class SignUp extends StatelessWidget {
               ),
               TextButton(
                 onPressed: () {
-                  // Sign In Screen
+                  Navigator.pushNamed(context, SignIn.id);
                 },
                 child: Text(
                   'Sign In!',
@@ -172,4 +176,5 @@ signUpSendToServer(username, email, password) async {
       'favoriteKeyboards': ''
     },
   );
+  print(response);
 }
