@@ -16,7 +16,6 @@ dependencies:
 
   cupertino_icons: ^1.0.2
   flutter_native_splash: ^2.2.17
-  passwordfield: ^0.1.0
   http: ^0.13.5
   flutter_dotenv: ^5.0.2
 
