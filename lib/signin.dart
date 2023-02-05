@@ -4,16 +4,21 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
 
 import './keytastic_colors.dart';
+import './password_field.dart';
 import './signup.dart';
 
-class SignIn extends StatelessWidget {
-  static const String id = 'signin';
-  final _formKey = GlobalKey<FormState>();
+class SignIn extends StatefulWidget {
+  const SignIn({super.key});
 
   @override
+  State<SignIn> createState() => _SignInState();
+}
+
+class _SignInState extends State<SignIn> {
+  String? email;
+  String? password;
+  @override
   Widget build(BuildContext context) {
-    String? email;
-    String? password;
     return Form(
       child: Center(
         child: Column(
@@ -35,39 +40,26 @@ class SignIn extends StatelessWidget {
               width: 346,
               padding: const EdgeInsets.all(10),
               child: TextFormField(
-                validator: (value) {
-                  
-                },
+                validator: (value) {},
                 onChanged: (value) {
                   email = value;
                 },
                 decoration: InputDecoration(
-                    hintText: 'Email',
-                    filled: true,
-                    fillColor: KeyTasticColors().keytasticWhite,
-                    border: OutlineInputBorder(),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            width: 2, color: KeyTasticColors().keytasticYellow))),
+                  hintText: 'Email',
+                  filled: true,
+                  fillColor: KeyTasticColors().keytasticWhite,
+                  border: OutlineInputBorder(),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        width: 2, color: KeyTasticColors().keytasticYellow),
+                  ),
+                ),
               ),
             ),
             Container(
               width: 346,
               padding: const EdgeInsets.all(10),
-              child: TextFormField(
-                onChanged: (value) {
-                  password = value;
-                },
-                obscureText: true,
-                decoration: InputDecoration(
-                    hintText: 'Password',
-                    filled: true,
-                    fillColor: KeyTasticColors().keytasticWhite,
-                    border: OutlineInputBorder(),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                            width: 2, color: KeyTasticColors().keytasticYellow))),
-              ),
+              child: PasswordField(),
             ),
             SizedBox(
               height: 8.0,
@@ -104,7 +96,7 @@ class SignIn extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, SignUp.id);
+                    // Implement screen to Sign Up!
                   },
                   child: Text(
                     'Sign Up!',

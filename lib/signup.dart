@@ -7,18 +7,22 @@ import 'dart:convert';
 import './keytastic_colors.dart';
 import './dashboard.dart';
 
-class SignUp extends StatelessWidget {
-  static const String id = 'signup';
-  final _formKey = GlobalKey<FormState>();
+class SignUp extends StatefulWidget {
+  const SignUp({super.key});
+
+  @override
+  State<SignUp> createState() => _SignUpState();
+}
+
+class _SignUpState extends State<SignUp> {
+  String? username;
+  String? email;
+  String? password;
+  String? confirmPassword;
 
   @override
   Widget build(BuildContext context) {
-    String? username;
-    String? email;
-    String? password;
-    String? confirmPassword;
     return Form(
-      key: null,
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -43,10 +47,10 @@ class SignUp extends StatelessWidget {
               padding: const EdgeInsets.all(10),
               child: TextFormField(
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter some text';
-                  }
-                  return null;
+                  // if (value == null || value.isEmpty) {
+                  //   return 'Please enter some text';
+                  // }
+                  // return null;
                 },
                 onChanged: (value) {
                   username = value;
@@ -131,13 +135,10 @@ class SignUp extends StatelessWidget {
               width: 328,
               child: ElevatedButton(
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Processing Data')),
-                  );
-                  if (_formKey.currentState!.validate()) {
-                    signUpSendToServer(username, email, password);
-                    Navigator.pushNamed(context, Dashboard.id);
-                  }
+                  // if (_formKey.currentState!.validate()) {
+                  // signUpSendToServer(username, email, password);
+                  // }
+                  
                 },
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(
@@ -165,7 +166,7 @@ class SignUp extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, SignIn.id);
+                    // Implement Screen to Sign In
                   },
                   child: Text(
                     'Sign In!',
