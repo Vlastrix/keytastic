@@ -15,17 +15,18 @@ class KeyTastic extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      routes: {
-        Dashboard.id: (context) => Dashboard(),
-      },
       theme: ThemeData(
-          scaffoldBackgroundColor: KeyTasticColors().keytasticDarkRed,
-          fontFamily: 'Comfortaa'),
+        scaffoldBackgroundColor: KeyTasticColors().keytasticDarkRed,
+        fontFamily: 'Comfortaa',
+        colorScheme: ColorScheme.fromSwatch().copyWith(
+          primary: KeyTasticColors().keytasticDarkRed,
+        ),
+      ),
       debugShowCheckedModeBanner: false,
       title: 'KeyTastic!',
       home: Scaffold(
           body: SafeArea(
-        child: SignIn(),
+        child: SignUp(),
       )),
     );
   }

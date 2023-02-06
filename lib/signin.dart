@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:fancy_password_field/fancy_password_field.dart';
 import 'dart:convert';
 
 import './keytastic_colors.dart';
-import './password_field.dart';
-import './signup.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -40,7 +39,7 @@ class _SignInState extends State<SignIn> {
               width: 346,
               padding: const EdgeInsets.all(10),
               child: TextFormField(
-                validator: (value) {},
+                keyboardType: TextInputType.emailAddress,
                 onChanged: (value) {
                   email = value;
                 },
@@ -48,7 +47,7 @@ class _SignInState extends State<SignIn> {
                   hintText: 'Email',
                   filled: true,
                   fillColor: KeyTasticColors().keytasticWhite,
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
                         width: 2, color: KeyTasticColors().keytasticYellow),
@@ -59,32 +58,51 @@ class _SignInState extends State<SignIn> {
             Container(
               width: 346,
               padding: const EdgeInsets.all(10),
-              child: PasswordField(),
+              child: FancyPasswordField(
+                onChanged: (value) {
+                  password = value;
+                },
+                hasValidationRules: false,
+                hasStrengthIndicator: false,
+                decoration: InputDecoration(
+                  hintText: 'Password',
+                  filled: true,
+                  fillColor: KeyTasticColors().keytasticWhite,
+                  border: const OutlineInputBorder(),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                        width: 2, color: KeyTasticColors().keytasticYellow),
+                  ),
+                ),
+              ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 8.0,
             ),
             Container(
               width: 328,
               child: ElevatedButton(
                 onPressed: () {
+                  // if sign in to server is succeded, send user to the dashboard
+                  // otherwise show the server response to the user 
+                  // (with a pop up or shomething) print(response.body);
                   signInSendToServer(email, password);
                 },
-                child: Text(
-                  'Sign In',
-                  style: TextStyle(fontSize: 15),
-                ),
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(
                     KeyTasticColors().keytasticCyan,
                   ),
                   padding: MaterialStateProperty.all(
-                    EdgeInsets.all(20),
+                    const EdgeInsets.all(20),
                   ),
+                ),
+                child: const Text(
+                  'Sign In',
+                  style: TextStyle(fontSize: 15),
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 8.0,
             ),
             Row(
