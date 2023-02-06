@@ -135,7 +135,7 @@ class _SignUpState extends State<SignUp> {
                     return 'Please enter some text.';
                   } else if (enteredPassword.contains(' ')) {
                     return 'Passwords cannot contain spaces.';
-                  } else if (!RegExp(r'^[A-Za-z0-9_.!@#$%^&*()]+$')
+                  } else if (!RegExp(r'^[A-Za-z0-9_.!@#\$%\^&\*\(\)\\]+$')
                       .hasMatch(enteredPassword)) {
                     return 'Only latin characters are accepted.';
                   } else if (!_passwordController.areAllRulesValidated) {
@@ -268,8 +268,7 @@ class _SignUpState extends State<SignUp> {
                 onPressed: () {
                   final form = _formKey.currentState!;
                   if (form.validate()) {
-                    var serverResponse = signUpSendToServer(username, email, password);
-                    print(serverResponse);
+                    signUpSendToServer(username, email, password);
                     // var serverResponse =
                     //     signUpSendToServer(username, email, password);
                     // sleep(const Duration(seconds: 4));
@@ -342,6 +341,6 @@ signUpSendToServer(username, email, password) async {
       'favoriteKeyboards': ''
     },
   );
-  await Future.delayed(Duration(seconds: 10));
-  return response.body;
+  await Future.delayed(Duration(seconds: 4));
+  print(response.body);
 }
