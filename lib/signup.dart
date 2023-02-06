@@ -356,7 +356,6 @@ signUpSendToServer(username, email, password) async {
       'username': username,
       'email': email,
       'password': password,
-      'favoriteKeyboards': ''
     },
   );
   return response;
