@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:email_validator/email_validator.dart';
 import 'dart:convert';
+import 'dart:async';
 
 import './keytastic_colors.dart';
 
@@ -22,8 +23,6 @@ class _SignUpState extends State<SignUp> {
   String? email;
   String? password;
   String? confirmPassword;
-  String? serverResponseBody;
-  int? serverResponseStatusCode;
 
   void changeEdgeInstets(value) {
     setState(() {
@@ -271,7 +270,9 @@ class _SignUpState extends State<SignUp> {
                 onPressed: () {
                   final form = _formKey.currentState!;
                   if (form.validate()) {
-                    signUpSendToServer(username, email, password);
+                    signUpSendToServer(username, email, password).then((serverResponse) {
+                      print(serverResponse.body);
+                    });
                     // var serverResponse =
                     //     signUpSendToServer(username, email, password);
                     // sleep(const Duration(seconds: 4));
@@ -344,6 +345,5 @@ signUpSendToServer(username, email, password) async {
       'favoriteKeyboards': ''
     },
   );
-  await Future.delayed(Duration(seconds: 4));
-  print(response.body);
+  return response;
 }
