@@ -22,6 +22,8 @@ class _SignUpState extends State<SignUp> {
   String? email;
   String? password;
   String? confirmPassword;
+  String? serverResponseBody;
+  int? serverResponseStatusCode;
 
   void changeEdgeInstets(value) {
     setState(() {
@@ -99,7 +101,7 @@ class _SignUpState extends State<SignUp> {
                     return 'Please enter some text.';
                   } else if (enteredEmail.contains(' ')) {
                     return 'Emails cannot contain spaces.';
-                  } else if (!RegExp(r'^[A-Za-z0-9_.@]+$')
+                  } else if (!RegExp(r'^[a-z0-9_.@]+$')
                       .hasMatch(enteredEmail)) {
                     return 'Only lowercase letters and latin characters.';
                   } else if (!EmailValidator.validate(email as String)) {
@@ -135,7 +137,8 @@ class _SignUpState extends State<SignUp> {
                     return 'Please enter some text.';
                   } else if (enteredPassword.contains(' ')) {
                     return 'Passwords cannot contain spaces.';
-                  } else if (!RegExp(r'^[A-Za-z0-9_.!@#\$%\^&\*\(\)\\]+$')
+                  } else if (!RegExp(
+                          r'^[A-Za-z0-9_\.!@=#\$%\^&\*\(\)\?\+\{\}\[\]\|\-`~:;]+$')
                       .hasMatch(enteredPassword)) {
                     return 'Only latin characters are accepted.';
                   } else if (!_passwordController.areAllRulesValidated) {
