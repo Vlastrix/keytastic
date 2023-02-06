@@ -137,7 +137,7 @@ class _SignUpState extends State<SignUp> {
                   } else if (enteredPassword.contains(' ')) {
                     return 'Passwords cannot contain spaces.';
                   } else if (!RegExp(
-                          r'^[A-Za-z0-9_\.!@=#\$%\^&\*\(\)\?\+\{\}\[\]\|\-`~:;]+$')
+                          r'^[A-Za-z0-9_\.!@=#\$%\^&\*\(\)\?\+\[\]\|\-`~:;]+$')
                       .hasMatch(enteredPassword)) {
                     return 'Only latin characters are accepted.';
                   } else if (!_passwordController.areAllRulesValidated) {
@@ -270,21 +270,36 @@ class _SignUpState extends State<SignUp> {
                 onPressed: () {
                   final form = _formKey.currentState!;
                   if (form.validate()) {
-                    signUpSendToServer(username, email, password).then((serverResponse) {
-                      print(serverResponse.body);
+                    signUpSendToServer(username, email, password)
+                        .then((serverResponse) {
+                      if (serverResponse.statusCode == 201) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(serverResponse.body),
+                          ),
+                        );
+                        // TODO: Send user to the dashboard screen,
+                        // Snack bar is shown for now (for debug)
+                      } else if (serverResponse.statusCode == 400) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              '${serverResponse.body} Please enter another email.',
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        );
+                      } else if (serverResponse.statusCode == 500) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              serverResponse.body,
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        );
+                      }
                     });
-                    // var serverResponse =
-                    //     signUpSendToServer(username, email, password);
-                    // sleep(const Duration(seconds: 4));
-                    // serverResponse['statusCode'];
-                    // serverResponse['body'];
-                    // if (serverResponse['statusCode'] == 200) {
-                    //   ScaffoldMessenger.of(context).showSnackBar(
-                    //     SnackBar(
-                    //       content: Text(serverResponse['body'] as String),
-                    //     ),
-                    //   );
-                    // }
                   }
                 },
                 style: ButtonStyle(
