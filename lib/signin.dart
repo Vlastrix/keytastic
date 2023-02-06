@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fancy_password_field/fancy_password_field.dart';
+import 'package:email_validator/email_validator.dart';
 import 'dart:convert';
 
 import './keytastic_colors.dart';
@@ -14,11 +15,13 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  final _formKey = GlobalKey<FormState>();
   String? email;
   String? password;
   @override
   Widget build(BuildContext context) {
     return Form(
+      key: _formKey,
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -40,10 +43,25 @@ class _SignInState extends State<SignIn> {
               padding: const EdgeInsets.all(10),
               child: TextFormField(
                 keyboardType: TextInputType.emailAddress,
-                onChanged: (value) {
-                  email = value;
+                validator: (enteredEmail) {
+                  if (enteredEmail == null || enteredEmail.isEmpty) {
+                    return 'Please enter some text.';
+                  } else if (enteredEmail.contains(' ')) {
+                    return 'Emails cannot contain spaces.';
+                  } else if (!RegExp(r'^[a-z0-9_.@]+$')
+                      .hasMatch(enteredEmail)) {
+                    return 'Only lowercase letters and latin characters.';
+                  } else if (!EmailValidator.validate(email as String)) {
+                    return 'Enter a valid email.';
+                  }
+                  return null;
+                },
+                onChanged: (enteredEmail) {
+                  email = enteredEmail;
                 },
                 decoration: InputDecoration(
+                  errorStyle:
+                      TextStyle(color: KeyTasticColors().keytasticYellow),
                   hintText: 'Email',
                   filled: true,
                   fillColor: KeyTasticColors().keytasticWhite,
@@ -59,12 +77,26 @@ class _SignInState extends State<SignIn> {
               width: 346,
               padding: const EdgeInsets.all(10),
               child: FancyPasswordField(
-                onChanged: (value) {
-                  password = value;
+                validator: (enteredPassword) {
+                  if (enteredPassword == null || enteredPassword.isEmpty) {
+                    return 'Please enter some text.';
+                  } else if (enteredPassword.contains(' ')) {
+                    return 'Passwords cannot contain spaces.';
+                  } else if (!RegExp(
+                          r'^[A-Za-z0-9_\.!@=#\$%\^&\*\(\)\?\+\[\]\|\-`~:;]+$')
+                      .hasMatch(enteredPassword)) {
+                    return 'Only latin characters are accepted.';
+                  }
+                  return null;
+                },
+                onChanged: (enteredPassword) {
+                  password = enteredPassword;
                 },
                 hasValidationRules: false,
                 hasStrengthIndicator: false,
                 decoration: InputDecoration(
+                  errorStyle:
+                      TextStyle(color: KeyTasticColors().keytasticYellow),
                   hintText: 'Password',
                   filled: true,
                   fillColor: KeyTasticColors().keytasticWhite,
@@ -83,10 +115,56 @@ class _SignInState extends State<SignIn> {
               width: 328,
               child: ElevatedButton(
                 onPressed: () {
-                  // if sign in to server is succeded, send user to the dashboard
-                  // otherwise show the server response to the user 
-                  // (with a pop up or shomething) print(response.body);
-                  signInSendToServer(email, password);
+                  final form = _formKey.currentState!;
+                  if (form.validate()) {
+                    signInSendToServer(email, password).then((serverResponse) {
+                      if (serverResponse.statusCode == 200) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(serverResponse.body),
+                          ),
+                        );
+                        // TODO: Send user to the dashboard screen,
+                        // Snack bar is shown for now (for debug)
+                      } else if (serverResponse.statusCode == 404) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              serverResponse.body,
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        );
+                      } else if (serverResponse.statusCode == 403) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              serverResponse.body,
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        );
+                      } else if (serverResponse.statusCode == 400) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              serverResponse.body,
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        );
+                      } else if (serverResponse.statusCode == 500) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              serverResponse.body,
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        );
+                      }
+                    });
+                  }
                 },
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(
@@ -144,4 +222,5 @@ signInSendToServer(email, password) async {
       'password': password,
     },
   );
+  return response;
 }

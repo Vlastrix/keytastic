@@ -26,7 +26,7 @@ class KeyTastic extends StatelessWidget {
       title: 'KeyTastic!',
       home: Scaffold(
           body: SafeArea(
-        child: SignUp(),
+        child: SignIn(),
       )),
     );
   }

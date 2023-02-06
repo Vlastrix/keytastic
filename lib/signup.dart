@@ -4,7 +4,6 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:email_validator/email_validator.dart';
 import 'dart:convert';
-import 'dart:async';
 
 import './keytastic_colors.dart';
 
@@ -284,7 +283,7 @@ class _SignUpState extends State<SignUp> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
-                              '${serverResponse.body} Please enter another email.',
+                              serverResponse.body,
                               style: const TextStyle(color: Colors.red),
                             ),
                           ),
