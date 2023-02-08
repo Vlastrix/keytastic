@@ -16,17 +16,17 @@ class KeyTastic extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        scaffoldBackgroundColor: KeyTasticColors().keytasticDarkRed,
+        scaffoldBackgroundColor: KeyTasticColors.keytasticDarkRed,
         fontFamily: 'Comfortaa',
         colorScheme: ColorScheme.fromSwatch().copyWith(
-          primary: KeyTasticColors().keytasticDarkRed,
+          primary: KeyTasticColors.keytasticDarkRed,
         ),
       ),
       debugShowCheckedModeBanner: false,
       title: 'KeyTastic!',
       home: Scaffold(
           body: SafeArea(
-        child: SignIn(),
+        child: SignUp(),
       )),
     );
   }

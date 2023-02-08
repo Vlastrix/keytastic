@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fancy_password_field/fancy_password_field.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:email_validator/email_validator.dart';
 import 'dart:convert';
 
@@ -15,11 +16,20 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  void checkToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? readJsonWebToken = prefs.getString('token');
+    if (readJsonWebToken != null) {
+      // send user to the next screen
+    }
+  }
+
   final _formKey = GlobalKey<FormState>();
   String? email;
   String? password;
   @override
   Widget build(BuildContext context) {
+    checkToken();
     return Form(
       key: _formKey,
       child: Center(
@@ -29,13 +39,13 @@ class _SignInState extends State<SignIn> {
             Text(
               'Sign In!',
               style: TextStyle(
-                  fontSize: 40, color: KeyTasticColors().keytasticYellow),
+                  fontSize: 40, color: KeyTasticColors.keytasticYellow),
             ),
             SizedBox(
               height: 20.0,
               width: 200.0,
               child: Divider(
-                color: KeyTasticColors().keytasticWhite,
+                color: KeyTasticColors.keytasticWhite,
               ),
             ),
             Container(
@@ -61,14 +71,14 @@ class _SignInState extends State<SignIn> {
                 },
                 decoration: InputDecoration(
                   errorStyle:
-                      TextStyle(color: KeyTasticColors().keytasticYellow),
+                      TextStyle(color: KeyTasticColors.keytasticYellow),
                   hintText: 'Email',
                   filled: true,
-                  fillColor: KeyTasticColors().keytasticWhite,
+                  fillColor: KeyTasticColors.keytasticWhite,
                   border: const OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                        width: 2, color: KeyTasticColors().keytasticYellow),
+                        width: 2, color: KeyTasticColors.keytasticYellow),
                   ),
                 ),
               ),
@@ -96,14 +106,14 @@ class _SignInState extends State<SignIn> {
                 hasStrengthIndicator: false,
                 decoration: InputDecoration(
                   errorStyle:
-                      TextStyle(color: KeyTasticColors().keytasticYellow),
+                      TextStyle(color: KeyTasticColors.keytasticYellow),
                   hintText: 'Password',
                   filled: true,
-                  fillColor: KeyTasticColors().keytasticWhite,
+                  fillColor: KeyTasticColors.keytasticWhite,
                   border: const OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                        width: 2, color: KeyTasticColors().keytasticYellow),
+                        width: 2, color: KeyTasticColors.keytasticYellow),
                   ),
                 ),
               ),
@@ -117,15 +127,14 @@ class _SignInState extends State<SignIn> {
                 onPressed: () {
                   final form = _formKey.currentState!;
                   if (form.validate()) {
-                    signInSendToServer(email, password).then((serverResponse) {
+                    signInSendToServer(email, password)
+                        .then((serverResponse) async {
                       if (serverResponse.statusCode == 200) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(serverResponse.body),
-                          ),
-                        );
-                        // TODO: Send user to the dashboard screen,
-                        // Snack bar is shown for now (for debug)
+                        // save the token
+                        final prefs = await SharedPreferences.getInstance();
+                        var receivedJsonWebToken =
+                            jsonDecode(serverResponse.body)['token'];
+                        await prefs.setString('token', receivedJsonWebToken);
                       } else if (serverResponse.statusCode == 404) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -168,7 +177,7 @@ class _SignInState extends State<SignIn> {
                 },
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(
-                    KeyTasticColors().keytasticCyan,
+                    KeyTasticColors.keytasticCyan,
                   ),
                   padding: MaterialStateProperty.all(
                     const EdgeInsets.all(20),
@@ -188,15 +197,15 @@ class _SignInState extends State<SignIn> {
               children: [
                 Text(
                   'Don\'t have an account?',
-                  style: TextStyle(color: KeyTasticColors().keytasticWhite),
+                  style: TextStyle(color: KeyTasticColors.keytasticWhite),
                 ),
                 TextButton(
                   onPressed: () {
-                    // Implement screen to Sign Up!
+                    // TODO: Implement screen to Sign Up!
                   },
                   child: Text(
                     'Sign Up!',
-                    style: TextStyle(color: KeyTasticColors().keytasticYellow),
+                    style: TextStyle(color: KeyTasticColors.keytasticYellow),
                   ),
                 )
               ],

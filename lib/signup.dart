@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 import './keytastic_colors.dart';
@@ -29,8 +30,17 @@ class _SignUpState extends State<SignUp> {
     });
   }
 
+  void checkToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? readJsonWebToken = prefs.getString('token');
+    if (readJsonWebToken != null) {
+      // send user to the dashboard
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    checkToken();
     return Form(
       key: _formKey,
       child: Center(
@@ -42,14 +52,14 @@ class _SignUpState extends State<SignUp> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 40,
-                color: KeyTasticColors().keytasticYellow,
+                color: KeyTasticColors.keytasticYellow,
               ),
             ),
             SizedBox(
               height: 20.0,
               width: 200.0,
               child: Divider(
-                color: KeyTasticColors().keytasticWhite,
+                color: KeyTasticColors.keytasticWhite,
               ),
             ),
             Container(
@@ -63,6 +73,8 @@ class _SignUpState extends State<SignUp> {
                     return 'Username cannot contain spaces.';
                   } else if (enteredUsername.length < 3) {
                     return 'Username should be more than 3 characters';
+                  } else if (enteredUsername.length > 20) {
+                    return 'Username should be less than 20 characters';
                   } else if (!RegExp(r'^[A-Za-z0-9_.]+$')
                       .hasMatch(enteredUsername)) {
                     return 'Only latin, underscores and dots characters.';
@@ -74,15 +86,15 @@ class _SignUpState extends State<SignUp> {
                 },
                 decoration: InputDecoration(
                   errorStyle:
-                      TextStyle(color: KeyTasticColors().keytasticYellow),
+                      TextStyle(color: KeyTasticColors.keytasticYellow),
                   hintText: 'Username',
                   filled: true,
-                  fillColor: KeyTasticColors().keytasticWhite,
+                  fillColor: KeyTasticColors.keytasticWhite,
                   border: const OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
                       width: 2,
-                      color: KeyTasticColors().keytasticYellow,
+                      color: KeyTasticColors.keytasticYellow,
                     ),
                   ),
                 ),
@@ -112,14 +124,14 @@ class _SignUpState extends State<SignUp> {
                 },
                 decoration: InputDecoration(
                   errorStyle:
-                      TextStyle(color: KeyTasticColors().keytasticYellow),
+                      TextStyle(color: KeyTasticColors.keytasticYellow),
                   hintText: 'Email',
                   filled: true,
-                  fillColor: KeyTasticColors().keytasticWhite,
+                  fillColor: KeyTasticColors.keytasticWhite,
                   border: const OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                        width: 2, color: KeyTasticColors().keytasticYellow),
+                        width: 2, color: KeyTasticColors.keytasticYellow),
                   ),
                 ),
               ),
@@ -163,13 +175,13 @@ class _SignUpState extends State<SignUp> {
                                         Icon(
                                           Icons.check,
                                           color:
-                                              KeyTasticColors().keytasticYellow,
+                                              KeyTasticColors.keytasticYellow,
                                         ),
                                         const SizedBox(width: 12),
                                         Text(
                                           rule.name,
                                           style: TextStyle(
-                                            color: KeyTasticColors()
+                                            color: KeyTasticColors
                                                 .keytasticYellow,
                                           ),
                                         ),
@@ -180,13 +192,13 @@ class _SignUpState extends State<SignUp> {
                                         Icon(
                                           Icons.close,
                                           color:
-                                              KeyTasticColors().keytasticWhite,
+                                              KeyTasticColors.keytasticWhite,
                                         ),
                                         const SizedBox(width: 12),
                                         Text(
                                           rule.name,
                                           style: TextStyle(
-                                            color: KeyTasticColors()
+                                            color: KeyTasticColors
                                                 .keytasticWhite,
                                           ),
                                         ),
@@ -216,14 +228,14 @@ class _SignUpState extends State<SignUp> {
                 },
                 decoration: InputDecoration(
                   errorStyle:
-                      TextStyle(color: KeyTasticColors().keytasticYellow),
+                      TextStyle(color: KeyTasticColors.keytasticYellow),
                   hintText: 'Password',
                   filled: true,
-                  fillColor: KeyTasticColors().keytasticWhite,
+                  fillColor: KeyTasticColors.keytasticWhite,
                   border: const OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                        width: 2, color: KeyTasticColors().keytasticYellow),
+                        width: 2, color: KeyTasticColors.keytasticYellow),
                   ),
                 ),
               ),
@@ -248,14 +260,14 @@ class _SignUpState extends State<SignUp> {
                 },
                 decoration: InputDecoration(
                   errorStyle:
-                      TextStyle(color: KeyTasticColors().keytasticYellow),
+                      TextStyle(color: KeyTasticColors.keytasticYellow),
                   hintText: 'Confirm Password',
                   filled: true,
-                  fillColor: KeyTasticColors().keytasticWhite,
+                  fillColor: KeyTasticColors.keytasticWhite,
                   border: const OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                        width: 2, color: KeyTasticColors().keytasticYellow),
+                        width: 2, color: KeyTasticColors.keytasticYellow),
                   ),
                 ),
               ),
@@ -270,15 +282,13 @@ class _SignUpState extends State<SignUp> {
                   final form = _formKey.currentState!;
                   if (form.validate()) {
                     signUpSendToServer(username, email, password)
-                        .then((serverResponse) {
+                        .then((serverResponse) async {
                       if (serverResponse.statusCode == 201) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(serverResponse.body),
-                          ),
-                        );
-                        // TODO: Send user to the dashboard screen,
-                        // Snack bar is shown for now (for debug)
+                        // save the token
+                        final prefs = await SharedPreferences.getInstance();
+                        var receivedJsonWebToken =
+                            jsonDecode(serverResponse.body)['token'];
+                        await prefs.setString('token', receivedJsonWebToken);
                       } else if (serverResponse.statusCode == 400) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -303,7 +313,7 @@ class _SignUpState extends State<SignUp> {
                 },
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(
-                    KeyTasticColors().keytasticCyan,
+                    KeyTasticColors.keytasticCyan,
                   ),
                   padding: MaterialStateProperty.all(
                     const EdgeInsets.all(20),
@@ -323,15 +333,15 @@ class _SignUpState extends State<SignUp> {
               children: [
                 Text(
                   'Already have an account?',
-                  style: TextStyle(color: KeyTasticColors().keytasticWhite),
+                  style: TextStyle(color: KeyTasticColors.keytasticWhite),
                 ),
                 TextButton(
                   onPressed: () {
-                    // Implement Screen to Sign In
+                    // TODO: Implement Screen to Sign In
                   },
                   child: Text(
                     'Sign In!',
-                    style: TextStyle(color: KeyTasticColors().keytasticYellow),
+                    style: TextStyle(color: KeyTasticColors.keytasticYellow),
                   ),
                 )
               ],
