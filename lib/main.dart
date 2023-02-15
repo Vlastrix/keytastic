@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import './signup.dart';
-import './signin.dart';
-import './keytastic_colors.dart';
-import './dashboard.dart';
+import './screens/dashboard_screen.dart';
+import './screens/signup_screen.dart';
+import './screens/signin_screen.dart';
+import './models/keytastic_colors.dart';
 
 void main() {
   runApp(const KeyTastic());
@@ -15,6 +15,12 @@ class KeyTastic extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      initialRoute: '/signin',
+      routes: {
+        '/signin': (context) => SignInScreen(),
+        '/dashboard': (context) => DashboardScreen(),
+        '/signup': (context) => SignUpScreen(),
+      },
       theme: ThemeData(
         scaffoldBackgroundColor: KeyTasticColors.keytasticDarkRed,
         fontFamily: 'Comfortaa',
@@ -24,10 +30,6 @@ class KeyTastic extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       title: 'KeyTastic!',
-      home: Scaffold(
-          body: SafeArea(
-        child: SignUp(),
-      )),
     );
   }
 }
