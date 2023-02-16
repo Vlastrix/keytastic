@@ -1,12 +1,9 @@
 import 'package:fancy_password_field/fancy_password_field.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:email_validator/email_validator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 
 import '../models/keytastic_colors.dart';
+import '../controllers/authentication_controller.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -30,17 +27,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
     });
   }
 
-  void checkToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    final String? readJsonWebToken = prefs.getString('token');
-    if (readJsonWebToken != null) {
-      // send user to the dashboard
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    checkToken();
     return Scaffold(
       body: SafeArea(
         child: Form(
@@ -49,7 +37,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
+                const Text(
                   'Create an account!',
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -57,7 +45,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     color: KeyTasticColors.keytasticYellow,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20.0,
                   width: 200.0,
                   child: Divider(
@@ -86,13 +74,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     onChanged: (value) {
                       username = value;
                     },
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       errorStyle:
                           TextStyle(color: KeyTasticColors.keytasticYellow),
                       hintText: 'Username',
                       filled: true,
                       fillColor: KeyTasticColors.keytasticWhite,
-                      border: const OutlineInputBorder(),
+                      border: OutlineInputBorder(),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
                           width: 2,
@@ -124,13 +112,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     onChanged: (value) {
                       email = value;
                     },
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       errorStyle:
                           TextStyle(color: KeyTasticColors.keytasticYellow),
                       hintText: 'Email',
                       filled: true,
                       fillColor: KeyTasticColors.keytasticWhite,
-                      border: const OutlineInputBorder(),
+                      border: OutlineInputBorder(),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
                             width: 2, color: KeyTasticColors.keytasticYellow),
@@ -174,15 +162,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   (rule) => rule.validate(value)
                                       ? Row(
                                           children: [
-                                            Icon(
+                                            const Icon(
                                               Icons.check,
-                                              color:
-                                                  KeyTasticColors.keytasticYellow,
+                                              color: KeyTasticColors
+                                                  .keytasticYellow,
                                             ),
                                             const SizedBox(width: 12),
                                             Text(
                                               rule.name,
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                 color: KeyTasticColors
                                                     .keytasticYellow,
                                               ),
@@ -191,15 +179,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         )
                                       : Row(
                                           children: [
-                                            Icon(
+                                            const Icon(
                                               Icons.close,
-                                              color:
-                                                  KeyTasticColors.keytasticWhite,
+                                              color: KeyTasticColors
+                                                  .keytasticWhite,
                                             ),
                                             const SizedBox(width: 12),
                                             Text(
                                               rule.name,
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                 color: KeyTasticColors
                                                     .keytasticWhite,
                                               ),
@@ -228,13 +216,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       }
                       password = enteredPassword;
                     },
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       errorStyle:
                           TextStyle(color: KeyTasticColors.keytasticYellow),
                       hintText: 'Password',
                       filled: true,
                       fillColor: KeyTasticColors.keytasticWhite,
-                      border: const OutlineInputBorder(),
+                      border: OutlineInputBorder(),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
                             width: 2, color: KeyTasticColors.keytasticYellow),
@@ -244,8 +232,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 Container(
                   width: 346,
-                  padding:
-                      EdgeInsets.fromLTRB(10, confirmPassEdgeInsetsValue, 10, 10),
+                  padding: EdgeInsets.fromLTRB(
+                      10, confirmPassEdgeInsetsValue, 10, 10),
                   child: TextFormField(
                     obscureText: true,
                     validator: (enteredConfirmPassword) {
@@ -260,13 +248,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     onChanged: (enteredConfirmPassword) {
                       confirmPassword = enteredConfirmPassword;
                     },
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       errorStyle:
                           TextStyle(color: KeyTasticColors.keytasticYellow),
                       hintText: 'Confirm Password',
                       filled: true,
                       fillColor: KeyTasticColors.keytasticWhite,
-                      border: const OutlineInputBorder(),
+                      border: OutlineInputBorder(),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
                             width: 2, color: KeyTasticColors.keytasticYellow),
@@ -277,41 +265,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(
                   height: 8.0,
                 ),
-                Container(
+                SizedBox(
                   width: 328,
                   child: ElevatedButton(
                     onPressed: () {
                       final form = _formKey.currentState!;
                       if (form.validate()) {
-                        signUpSendToServer(username, email, password)
-                            .then((serverResponse) async {
-                          if (serverResponse.statusCode == 201) {
-                            // save the token
-                            final prefs = await SharedPreferences.getInstance();
-                            var receivedJsonWebToken =
-                                jsonDecode(serverResponse.body)['token'];
-                            await prefs.setString('token', receivedJsonWebToken);
-                            Navigator.pushNamed(context, '/dashboard');
-                          } else if (serverResponse.statusCode == 400) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  serverResponse.body,
-                                  style: const TextStyle(color: Colors.red),
-                                ),
-                              ),
-                            );
-                          } else if (serverResponse.statusCode == 500) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  serverResponse.body,
-                                  style: const TextStyle(color: Colors.red),
-                                ),
-                              ),
-                            );
-                          }
-                        });
+                        AuthenticationController.signUp(
+                            username, email, password, context);
                       }
                     },
                     style: ButtonStyle(
@@ -334,7 +295,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    const Text(
                       'Already have an account?',
                       style: TextStyle(color: KeyTasticColors.keytasticWhite),
                     ),
@@ -342,9 +303,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       onPressed: () {
                         Navigator.pushNamed(context, '/signin');
                       },
-                      child: Text(
+                      child: const Text(
                         'Sign In!',
-                        style: TextStyle(color: KeyTasticColors.keytasticYellow),
+                        style:
+                            TextStyle(color: KeyTasticColors.keytasticYellow),
                       ),
                     )
                   ],
@@ -356,22 +318,4 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
   }
-}
-
-signUpSendToServer(username, email, password) async {
-  await dotenv.load(fileName: ".env");
-  String serverUrl = '${dotenv.env['SERVER_URL']}/signup';
-  final response = await http.post(
-    Uri.parse(serverUrl),
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    encoding: Encoding.getByName('utf-8'),
-    body: {
-      'username': username,
-      'email': email,
-      'password': password,
-    },
-  );
-  return response;
 }

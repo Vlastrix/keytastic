@@ -17,9 +17,9 @@ class KeyTastic extends StatelessWidget {
     return MaterialApp(
       initialRoute: '/signin',
       routes: {
-        '/signin': (context) => SignInScreen(),
-        '/dashboard': (context) => DashboardScreen(),
-        '/signup': (context) => SignUpScreen(),
+        '/signin': (context) => const SignInScreen(),
+        '/dashboard': (context) => const DashboardScreen(),
+        '/signup': (context) => const SignUpScreen(),
       },
       theme: ThemeData(
         scaffoldBackgroundColor: KeyTasticColors.keytasticDarkRed,
