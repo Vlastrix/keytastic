@@ -15,7 +15,7 @@ class KeyTastic extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: '/signin',
+      initialRoute: '/dashboard',
       routes: {
         '/signin': (context) => const SignInScreen(),
         '/dashboard': (context) => const DashboardScreen(),
