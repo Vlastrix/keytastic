@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:keytastic/models/keytastic_colors.dart';
+import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 
 import '../controllers/authentication_controller.dart';
+import '../models/keytastic_colors.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -10,8 +11,6 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  Icon customIcon = const Icon(Icons.search);
-  Widget customSearchBar = const Text('KeyTastic!');
   bool tokenChecked = false;
   void checkToken() {
     if (tokenChecked == false) {
@@ -22,53 +21,57 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
     checkToken();
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: KeyTasticColors.keytasticWhite,
-      appBar: AppBar(
-        title: customSearchBar,
-        automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            onPressed: () {
-              setState(() {
-                if (customIcon.icon == Icons.search) {
-                  if (customIcon.icon == Icons.search) {
-                    customIcon = const Icon(Icons.cancel);
-                    customSearchBar = const ListTile(
-                      leading: Icon(
-                        Icons.search,
-                        color: KeyTasticColors.keytasticWhite,
-                        size: 28,
-                      ),
-                      title: TextField(
-                        decoration: InputDecoration(
-                          hintText: 'search for a keyboard here...',
-                          hintStyle: TextStyle(
-                            color: KeyTasticColors.keytasticWhite,
-                            fontSize: 18,
-                            fontStyle: FontStyle.italic,
-                          ),
-                          border: InputBorder.none,
-                        ),
-                        style: TextStyle(
-                          color: KeyTasticColors.keytasticWhite,
-                        ),
-                      ),
-                    );
-                  }
-                } else {
-                  customIcon = const Icon(Icons.search);
-                  customSearchBar = const Text('KeyTastic!');
-                }
-              });
-            },
-            icon: customIcon,
-          )
-        ],
-      ),
-      body: ListView(
-        children: const [Text('data')],
+      body: SafeArea(
+        child: FloatingSearchBar(
+          hint: 'Search...',
+          scrollPadding: const EdgeInsets.only(top: 16, bottom: 56),
+          transitionDuration: const Duration(milliseconds: 800),
+          transitionCurve: Curves.easeInOut,
+          physics: const BouncingScrollPhysics(),
+          axisAlignment: isPortrait ? 0.0 : -1.0,
+          openAxisAlignment: 0.0,
+          width: isPortrait ? 600 : 500,
+          debounceDelay: const Duration(milliseconds: 500),
+          onQueryChanged: (query) {
+            // Call your model, bloc, controller here.
+          },
+          // Specify a custom transition to be used for
+          // animating between opened and closed stated.
+          transition: CircularFloatingSearchBarTransition(),
+          actions: [
+            FloatingSearchBarAction(
+              showIfOpened: false,
+              child: CircularButton(
+                icon: const Icon(Icons.close),
+                onPressed: () {},
+              ),
+            ),
+            FloatingSearchBarAction.searchToClear(
+              showIfClosed: false,
+            ),
+          ],
+          builder: (context, transition) {
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Material(
+                color: KeyTasticColors.keytasticWhite,
+                elevation: 4.0,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: Colors.accents.map((color) {
+                    return Container(height: 112, color: color);
+                  }).toList(),
+                ),
+              ),
+            );
+          },
+        ),
       ),
     );
   }

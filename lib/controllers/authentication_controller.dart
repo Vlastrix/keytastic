@@ -3,18 +3,32 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'dart:io';
 
 class AuthenticationController {
-  static postDataToServer(service, dataToSend) async {
-    await dotenv.load(fileName: ".env");
-    String serverUrl = '${dotenv.env['SERVER_URL']}$service';
-    final response = await http.post(Uri.parse(serverUrl),
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        encoding: Encoding.getByName('utf-8'),
-        body: dataToSend);
-    return response;
+  static postDataToServer(service, dataToSend, context) async {
+    try {
+      await dotenv.load(fileName: ".env");
+      String serverUrl = '${dotenv.env['SERVER_URL']}$service';
+      final response = await http.post(Uri.parse(serverUrl),
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          encoding: Encoding.getByName('utf-8'),
+          body: dataToSend);
+      return response;
+    } catch (error) {
+      Navigator.pushReplacementNamed(context, '/signin');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Something went wrong...',
+            style: TextStyle(color: Colors.red),
+          ),
+        ),
+      );
+      throw const HttpException('Something went wrong...');
+    }
   }
 
   static verifyToken(context) async {
@@ -24,7 +38,8 @@ class AuthenticationController {
       Navigator.pushReplacementNamed(context, '/signup');
       return;
     }
-    final response = await postDataToServer('/verifytoken', {'token': token});
+    final response =
+        await postDataToServer('/verifytoken', {'token': token}, context);
     if (response.statusCode != 200) {
       Navigator.pushReplacementNamed(context, '/signin');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -40,7 +55,7 @@ class AuthenticationController {
 
   static void signIn(email, password, context) async {
     final response = await postDataToServer(
-        '/signin', {'email': email, 'password': password});
+        '/signin', {'email': email, 'password': password}, context);
     if (response.statusCode == 200) {
       final prefs = await SharedPreferences.getInstance();
       var receivedUsername = jsonDecode(response.body)['username'];
@@ -64,7 +79,7 @@ class AuthenticationController {
 
   static signUp(username, email, password, context) async {
     final response = await postDataToServer('/signup',
-        {'username': username, 'email': email, 'password': password});
+        {'username': username, 'email': email, 'password': password}, context);
     if (response.statusCode == 201) {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('username', username);
