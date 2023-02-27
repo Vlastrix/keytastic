@@ -21,7 +21,6 @@ dependencies:
   fancy_password_field: ^2.0.0
   email_validator: '^2.1.16'
   shared_preferences: ^2.0.17
-  material_floating_search_bar: ^0.3.7
 
 dev_dependencies:
   flutter_test:
