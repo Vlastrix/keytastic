@@ -3,7 +3,6 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import 'dart:io';
 
 class AuthenticationController {
   static postDataToServer(service, dataToSend, context) async {
@@ -27,7 +26,7 @@ class AuthenticationController {
           ),
         ),
       );
-      throw const HttpException('Something went wrong...');
+      throw Exception('Something went wrong with the server...');
     }
   }
 
